@@ -1,0 +1,11 @@
+backend/.mvn
+backend/.settings
+backend/target
+.classpath
+.factorypath
+.project
+
+# Java Compiled
+*.class
+*.jar
+

@@ -1,0 +1,82 @@
+[
+  {
+    "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "beschreibung": "Never Gonna Give You Up",
+    "channel": "Rick Astley",
+    "dauer": "00:03:33",
+    "stichwort": "music 80s",
+    "mediaType": "VIDEO"
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=9bZkp7q19f0",
+    "beschreibung": "Gangnam Style",
+    "channel": "PSY",
+    "dauer": "00:04:13",
+    "stichwort": "kpop viral",
+    "mediaType": "VIDEO"
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=kJQP7kiw5Fk",
+    "beschreibung": "Despacito",
+    "channel": "Luis Fonsi",
+    "dauer": "00:04:42",
+    "stichwort": "latino music",
+    "mediaType": "VIDEO"
+  },
+  {
+    "url": "https://open.spotify.com/episode/example",
+    "beschreibung": "Tech Talk Episode 42",
+    "channel": "TechPodcast",
+    "dauer": "00:45:30",
+    "stichwort": "tech podcast",
+    "mediaType": "AUDIO"
+  },
+  {
+    "url": "https://open.spotify.com/episode/example2",
+    "beschreibung": "AI Deep Dive",
+    "channel": "AI Weekly",
+    "dauer": "01:15:00",
+    "stichwort": "ai tech",
+    "mediaType": "AUDIO"
+  },
+  {
+    "url": "https://medium.com/@user/ai-article",
+    "beschreibung": "Understanding AI in 2025",
+    "channel": "AI Weekly",
+    "dauer": null,
+    "stichwort": "ai tech future",
+    "mediaType": "TEXT"
+  },
+  {
+    "url": "https://dev.to/article/react-hooks",
+    "beschreibung": "React Hooks Explained",
+    "channel": "Dev Community",
+    "dauer": null,
+    "stichwort": "react javascript tutorial",
+    "mediaType": "TEXT"
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=example1",
+    "beschreibung": "Spring Boot Tutorial",
+    "channel": "Code with Sven",
+    "dauer": "00:25:15",
+    "stichwort": "java springboot",
+    "mediaType": "VIDEO"
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=example2",
+    "beschreibung": "Docker Basics",
+    "channel": "DevOps Master",
+    "dauer": "00:18:30",
+    "stichwort": "docker devops",
+    "mediaType": "VIDEO"
+  },
+  {
+    "url": "https://soundcloud.com/episode",
+    "beschreibung": "Startup Stories",
+    "channel": "Founder Talks",
+    "dauer": "00:52:00",
+    "stichwort": "startup business",
+    "mediaType": "AUDIO"
+  }
+]

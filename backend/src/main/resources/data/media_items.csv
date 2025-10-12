@@ -1,0 +1,11 @@
+URL,BESCHREIBUNG,CHANNEL,DAUER,STICHWORT,MEDIA_TYPE
+https://www.youtube.com/watch?v=dQw4w9WgXcQ,Never Gonna Give You Up,Rick Astley,00:03:33,music 80s,VIDEO
+https://www.youtube.com/watch?v=9bZkp7q19f0,Gangnam Style,PSY,00:04:13,kpop viral,VIDEO
+https://www.youtube.com/watch?v=kJQP7kiw5Fk,Despacito,Luis Fonsi,00:04:42,latino music,VIDEO
+https://open.spotify.com/episode/example,Tech Talk Episode 42,TechPodcast,00:45:30,tech podcast,AUDIO
+https://open.spotify.com/episode/example2,AI Deep Dive,AI Weekly,01:15:00,ai tech,AUDIO
+https://medium.com/@user/ai-article,Understanding AI in 2025,AI Weekly,,ai tech future,TEXT
+https://dev.to/article/react-hooks,React Hooks Explained,Dev Community,,react javascript tutorial,TEXT
+https://www.youtube.com/watch?v=example1,Spring Boot Tutorial,Code with Sven,00:25:15,java springboot,VIDEO
+https://www.youtube.com/watch?v=example2,Docker Basics,DevOps Master,00:18:30,docker devops,VIDEO
+https://soundcloud.com/episode,Startup Stories,Founder Talks,00:52:00,startup business,AUDIO
