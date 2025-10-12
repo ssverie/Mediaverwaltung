@@ -65,7 +65,7 @@ Mediaverwaltung/
 
 1. **Repository klonen:**
 ```bash
-git clone https://github.com/DEIN-USERNAME/Mediaverwaltung.git
+git clone https://github.com/ssverie/Mediaverwaltung.git
 cd Mediaverwaltung
 ```
 
