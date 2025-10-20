@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaVerwaltung - Liste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        nav {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav h1 {
+            color: #667eea;
+            font-size: 24px;
+        }
+        nav .links {
+            display: flex;
+            gap: 15px;
+        }
+        nav a {
+            text-decoration: none;
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        nav a:hover {
+            background: #f0f0f0;
+        }
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .filter-box select {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        tr.editing {
+            background: #fff3cd;
+        }
+        .url-link {
+            color: #667eea;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .url-link:hover {
+            text-decoration: underline;
+        }
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-edit {
+            background: #28a745;
+            color: white;
+        }
+        .btn-edit:hover {
+            background: #218838;
+        }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        .btn-save {
+            background: #007bff;
+            color: white;
+        }
+        .btn-save:hover {
+            background: #0056b3;
+        }
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+        .edit-input {
+            width: 100%;
+            padding: 6px;
+            border: 2px solid #667eea;
+            border-radius: 4px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .stat strong {
+            color: #667eea;
+            font-size: 24px;
+        }
+        .stat span {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <h1>🎬 MediaVerwaltung</h1>
+            <div class="links">
+                <a href="index.html">🏠 Home</a>
+                <a href="create.html">➕ Neu erstellen</a>
+                <a href="list.html">📋 Alle anzeigen</a>
+            </div>
+        </nav>
+
+        <div class="content">
+            <h2>📋 Alle MediaItems</h2>
+
+            <div class="stats">
+                <div class="stat">
+                    <div><strong id="totalCount">0</strong></div>
+                    <div><span>Items</span></div>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Suche nach Beschreibung, Channel..." onkeyup="filterTable()">
+                </div>
+                <div class="filter-box">
+                    <select id="typeFilter" onchange="filterTable()">
+                        <option value="">Alle Typen</option>
+                        <option value="VIDEO">Video</option>
+                        <option value="AUDIO">Audio</option>
+                        <option value="TEXT">Text</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="loading" class="loading">⏳ Lade Daten...</div>
+            <div id="empty" class="empty" style="display:none">
+                Keine MediaItems gefunden.<br>
+                <a href="create.html">Erstelle dein erstes Item!</a>
+            </div>
+
+            <div class="table-container">
+                <table id="mediaTable" style="display:none">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>URL</th>
+                            <th>Beschreibung</th>
+                            <th>Channel</th>
+                            <th>Dauer</th>
+                            <th>Typ</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allItems = [];
+        let editingId = null;
+
+        async function loadItems() {
+            try {
+                const response = await fetch('http://localhost:8080/api/media');
+                allItems = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (allItems.length === 0) {
+                    document.getElementById('empty').style.display = 'block';
+                } else {
+                    document.getElementById('mediaTable').style.display = 'table';
+                    updateStats();
+                    renderTable();
+                }
+            } catch (error) {
+                document.getElementById('loading').innerHTML = '❌ Fehler beim Laden: ' + error.message + '<br>Läuft das Backend?';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = allItems.length;
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            const filteredItems = allItems.filter(item => {
+                const matchesSearch = !searchTerm || 
+                    (item.beschreibung && item.beschreibung.toLowerCase().includes(searchTerm)) ||
+                    (item.channel && item.channel.toLowerCase().includes(searchTerm)) ||
+                    (item.url && item.url.toLowerCase().includes(searchTerm));
+                
+                const matchesType = !typeFilter || item.mediaType === typeFilter;
+                
+                return matchesSearch && matchesType;
+            });
+
+            if (filteredItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;">Keine Ergebnisse</td></tr>';
+                return;
+            }
+
+            filteredItems.forEach(item => {
+                const row = document.createElement('tr');
+                row.id = 'row-' + item.id;
+                
+                if (editingId === item.id) {
+                    row.classList.add('editing');
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td><input type="text" class="edit-input" id="edit-url-${item.id}" value="${item.url || ''}"></td>
+                        <td><input type="text" class="edit-input" id="edit-beschreibung-${item.id}" value="${item.beschreibung || ''}"></td>
+                        <td><input type="text" class="edit-input" id="edit-channel-${item.id}" value="${item.channel || ''}"></td>
+                        <td><input type="text" class="edit-input" id="edit-dauer-${item.id}" value="${item.dauer || ''}"></td>
+                        <td>
+                            <select class="edit-input" id="edit-mediaType-${item.id}">
+                                <option value="VIDEO" ${item.mediaType === 'VIDEO' ? 'selected' : ''}>Video</option>
+                                <option value="AUDIO" ${item.mediaType === 'AUDIO' ? 'selected' : ''}>Audio</option>
+                                <option value="TEXT" ${item.mediaType === 'TEXT' ? 'selected' : ''}>Text</option>
+                            </select>
+                        </td>
+                        <td class="actions">
+                            <button class="btn-save" onclick="saveItem(${item.id})">💾 Save</button>
+                            <button class="btn-cancel" onclick="cancelEdit()">❌ Cancel</button>
+                        </td>
+                    `;
+                } else {
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td><a href="${item.url}" target="_blank" class="url-link" title="${item.url}">${truncate(item.url, 40)}</a></td>
+                        <td>${item.beschreibung || '-'}</td>
+                        <td>${item.channel || '-'}</td>
+                        <td>${item.dauer || '-'}</td>
+                        <td>${item.mediaType || '-'}</td>
+                        <td class="actions">
+                            <button class="btn-edit" onclick="editItem(${item.id})">✏️ Edit</button>
+                            <button class="btn-delete" onclick="deleteItem(${item.id}, '${escapeHtml(item.beschreibung || item.url)}')">🗑️ Delete</button>
+                        </td>
+                    `;
+                }
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function truncate(str, length) {
+            if (!str) return '-';
+            return str.length > length ? str.substring(0, length) + '...' : str;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/'/g, "\\'");
+        }
+
+        function editItem(id) {
+            editingId = id;
+            renderTable();
+        }
+
+        function cancelEdit() {
+            editingId = null;
+            renderTable();
+        }
+
+        async function saveItem(id) {
+            const updatedItem = {
+                id: id,
+                url: document.getElementById(`edit-url-${id}`).value,
+                beschreibung: document.getElementById(`edit-beschreibung-${id}`).value,
+                channel: document.getElementById(`edit-channel-${id}`).value,
+                dauer: document.getElementById(`edit-dauer-${id}`).value || null,
+                mediaType: document.getElementById(`edit-mediaType-${id}`).value
+            };
+
+            try {
+                const response = await fetch(`https://mediaverwaltung.onrender.com/api/media/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedItem)
+                });
+
+                if (response.ok) {
+                    editingId = null;
+                    await loadItems();
+                    alert('✅ Erfolgreich gespeichert!');
+                } else {
+                    alert('❌ Fehler beim Speichern: ' + response.status);
+                }
+            } catch (error) {
+                alert('❌ Verbindungsfehler: ' + error.message);
+            }
+        }
+
+        async function deleteItem(id, description) {
+            if (!confirm(`Wirklich löschen?\n\n"${description}"`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/media/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok || response.status === 204) {
+                    await loadItems();
+                    alert('✅ Erfolgreich gelöscht!');
+                } else {
+                    alert('❌ Fehler beim Löschen: ' + response.status);
+                }
+            } catch (error) {
+                alert('❌ Verbindungsfehler: ' + error.message);
+            }
+        }
+
+        function filterTable() {
+            renderTable();
+        }
+
+        // Initial laden
+        loadItems();
+    </script>
+</body>
+</html>
