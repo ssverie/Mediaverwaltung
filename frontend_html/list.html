@@ -265,7 +265,7 @@
 
         async function loadItems() {
             try {
-                const response = await fetch('http://localhost:8080/api/media');
+                const response = await fetch('https://mediaverwaltung.onrender.com/api/media');
                 allItems = await response.json();
                 
                 document.getElementById('loading').style.display = 'none';
@@ -413,7 +413,7 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:8080/api/media/${id}`, {
+                const response = await fetch(`https://mediaverwaltung.onrender.com/api/media/${id}`, {
                     method: 'DELETE'
                 });
 
