@@ -174,6 +174,10 @@
                     <h3 id="totalChannels">-</h3>
                     <p>Verschiedene Channels</p>
                 </div>
+				<div class="stat-card">
+                    <h3 id="gesehenCount">-</h3>
+                    <p>Gesehen</p>
+                </div>
             </div>
 
             <div class="features">
@@ -226,6 +230,11 @@
                 // Verschiedene Channels
                 const uniqueChannels = new Set(items.map(item => item.channel).filter(c => c));
                 document.getElementById('totalChannels').textContent = uniqueChannels.size;
+				
+				// Gesehene Items
+				const gesehenCount = items.filter(item => item.gesehen).length;
+				document.getElementById('gesehenCount').textContent = `${gesehenCount} / ${items.length}`;
+
 
             } catch (error) {
                 console.error('Fehler beim Laden der Statistiken:', error);

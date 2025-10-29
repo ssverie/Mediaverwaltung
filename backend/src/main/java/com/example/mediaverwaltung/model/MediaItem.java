@@ -55,6 +55,10 @@ public class MediaItem {
     @Column(length = 255)
     private String dauer;
     
+    
+    @Column(name = "gesehen", nullable = false)
+    private Boolean gesehen = false;
+    
     /**
      * Stichwörter / Tags (komma-separiert)
      */

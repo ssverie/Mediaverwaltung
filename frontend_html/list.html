@@ -250,6 +250,7 @@
                             <th>Beschreibung</th>
                             <th>Channel</th>
                             <th>Dauer</th>
+							<th>Gesehen</th>
                             <th>Typ</th>
                             <th>Aktionen</th>
                         </tr>
@@ -331,7 +332,8 @@
                         <td><input type="text" class="edit-input" id="edit-beschreibung-${item.id}" value="${item.beschreibung || ''}"></td>
                         <td><input type="text" class="edit-input" id="edit-channel-${item.id}" value="${item.channel || ''}"></td>
                         <td><input type="text" class="edit-input" id="edit-dauer-${item.id}" value="${item.dauer || ''}"></td>
-                        <td>
+						<td><input type="checkbox" class="edit-input" id="edit-gesehen-${item.id}" ${item.gesehen ? 'checked' : ''}></td>
+						<td>
                             <select class="edit-input" id="edit-mediaType-${item.id}">
                                 <option value="VIDEO" ${item.mediaType === 'VIDEO' ? 'selected' : ''}>Video</option>
                                 <option value="AUDIO" ${item.mediaType === 'AUDIO' ? 'selected' : ''}>Audio</option>
@@ -350,6 +352,7 @@
                         <td>${item.beschreibung || '-'}</td>
                         <td>${item.channel || '-'}</td>
                         <td>${item.dauer || '-'}</td>
+						<td>${item.gesehen ? '✅' : '❌'}</td>
                         <td>${item.mediaType || '-'}</td>
                         <td class="actions">
                             <button class="btn-edit" onclick="editItem(${item.id})">✏️ Edit</button>
@@ -388,6 +391,7 @@
                 beschreibung: document.getElementById(`edit-beschreibung-${id}`).value,
                 channel: document.getElementById(`edit-channel-${id}`).value,
                 dauer: document.getElementById(`edit-dauer-${id}`).value || null,
+				gesehen: document.getElementById(`edit-gesehen-${id}`).checked,
                 mediaType: document.getElementById(`edit-mediaType-${id}`).value
             };
 
