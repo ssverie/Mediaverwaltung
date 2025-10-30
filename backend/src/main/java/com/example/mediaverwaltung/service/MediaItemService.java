@@ -118,6 +118,109 @@ public class MediaItemService {
     }
     
     
+ // ========================================
+ // CSV EXPORT/IMPORT (NEU!)
+ // ========================================
+
+ /**
+  * Exportiert alle MediaItems als CSV-String
+  * Format: url,beschreibung,channel,dauer,gesehen,mediaType,stichwort
+  * 
+  * @return CSV-String mit allen Items
+  */
+ public String exportAllToCSV() {
+     List<MediaItem> items = repository.findAll();
+     
+     StringBuilder csv = new StringBuilder();
+     
+     // Header
+     csv.append("url,beschreibung,channel,dauer,gesehen,mediaType,stichwort\n");
+     
+     // Daten
+     for (MediaItem item : items) {
+         csv.append(escapeCsv(item.getUrl())).append(",");
+         csv.append(escapeCsv(item.getBeschreibung())).append(",");
+         csv.append(escapeCsv(item.getChannel())).append(",");
+         csv.append(escapeCsv(item.getDauer())).append(",");
+         csv.append(item.getGesehen() != null ? item.getGesehen() : false).append(",");
+         csv.append(escapeCsv(item.getMediaType())).append(",");
+         csv.append(escapeCsv(item.getStichwort())).append("\n");
+     }
+     
+     return csv.toString();
+ }
+
+ /**
+  * Importiert MediaItems aus CSV-String
+  * STRATEGIE: REPLACE (Tabelle leeren + neu einfügen)
+  * 
+  * @param csvContent CSV-String (mit Header!)
+  * @return Anzahl importierter Items
+  */
+ public int importFromCSVReplace(String csvContent) throws Exception {
+     System.out.println("📥 Starte CSV-Upload (REPLACE-Strategie)");
+     
+     // 1. Tabelle leeren
+     repository.deleteAll();
+     System.out.println("🗑️  Alle bestehenden Items gelöscht");
+     
+     // 2. CSV parsen
+     String[] lines = csvContent.split("\n");
+     int count = 0;
+     
+     // Header überspringen (erste Zeile)
+     for (int i = 1; i < lines.length; i++) {
+         String line = lines[i].trim();
+         if (line.isEmpty()) continue;
+         
+         try {
+             String[] fields = parseCsvLine(line);
+             
+             if (fields.length >= 7) {
+                 MediaItem item = new MediaItem();
+                 item.setUrl(fields[0]);
+                 item.setBeschreibung(fields[1]);
+                 item.setChannel(fields[2]);
+                 item.setDauer(fields[3]);
+                 item.setGesehen(Boolean.parseBoolean(fields[4]));
+                 item.setMediaType(fields[5]);
+                 item.setStichwort(fields[6]);
+                 
+                 repository.save(item);
+                 count++;
+                 System.out.println("  ✓ Importiert: " + item.getBeschreibung());
+             }
+         } catch (Exception e) {
+             System.err.println("  ✗ Fehler in Zeile " + (i+1) + ": " + e.getMessage());
+         }
+     }
+     
+     System.out.println("✅ Import abgeschlossen: " + count + " Items");
+     return count;
+ }
+
+ /**
+  * Escapet CSV-Werte (Kommas, Quotes)
+  */
+ private String escapeCsv(String value) {
+     if (value == null) return "";
+     
+     // Wenn Komma oder Quote enthalten: In Quotes wrappen und Quotes verdoppeln
+     if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+         return "\"" + value.replace("\"", "\"\"") + "\"";
+     }
+     return value;
+ }
+ 
+
+ /**
+  * Parst eine CSV-Zeile (berücksichtigt Quotes)
+  */
+ private String[] parseCsvLine(String line) {
+     return line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+ }
+    
+    
     
     
     

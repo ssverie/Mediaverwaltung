@@ -52,6 +52,23 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 10px rgba(102, 126, 234, 0.3);
         }
+        /* NEU: Button-Styling für CSV Buttons */
+        nav button {
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: transform 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        nav button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(102, 126, 234, 0.3);
+        }
         .content {
             background: white;
             padding: 40px;
@@ -143,6 +160,66 @@
             transform: scale(1.05);
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
+        /* NEU: Upload Dialog Styling */
+        .upload-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 1000;
+            min-width: 400px;
+        }
+        .upload-dialog h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .upload-dialog .warning {
+            color: #d32f2f;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 5px;
+        }
+        .upload-dialog input[type="file"] {
+            margin: 20px 0;
+            width: 100%;
+        }
+        .upload-dialog .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .upload-dialog button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .upload-dialog .btn-upload {
+            background: #4CAF50;
+            color: white;
+        }
+        .upload-dialog .btn-cancel {
+            background: #666;
+            color: white;
+        }
+        .upload-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
@@ -151,10 +228,27 @@
             <h1>🎬 MediaVerwaltung</h1>
             <div class="links">
                 <a href="dashboard.html">🏠 Dash</a>
+                <!-- NEU: CSV Download/Upload Buttons -->
+                <button onclick="downloadCSV()">📥 Download</button>
+                <button onclick="openUploadDialog()">📤 Upload</button>
                 <a href="create.html">➕ Neu erstellen</a>
                 <a href="list.html">📋 Alle anzeigen</a>
             </div>
         </nav>
+
+        <!-- NEU: Upload Dialog -->
+        <div class="upload-dialog" id="uploadDialog">
+            <h3>📤 CSV Upload</h3>
+            <div class="warning">
+                ⚠️ ACHTUNG: Alle bestehenden Daten werden gelöscht!
+            </div>
+            <input type="file" id="csvFile" accept=".csv">
+            <div class="buttons">
+                <button class="btn-cancel" onclick="closeUploadDialog()">❌ Abbrechen</button>
+                <button class="btn-upload" onclick="uploadCSV()">✅ Hochladen & Ersetzen</button>
+            </div>
+        </div>
+        <div class="upload-backdrop" id="uploadBackdrop" onclick="closeUploadDialog()"></div>
 
         <div class="content">
             <div class="hero">
@@ -258,6 +352,103 @@
 
         // Statistiken beim Laden der Seite aktualisieren
         loadStats();
+
+        // ========================================
+        // NEU: CSV DOWNLOAD/UPLOAD FUNKTIONEN
+        // ========================================
+
+        /**
+         * CSV Download
+         */
+        async function downloadCSV() {
+            try {
+                const response = await fetch(`${API.MEDIA}/download`);
+                
+                if (!response.ok) {
+                    throw new Error('Download fehlgeschlagen');
+                }
+                
+                const csv = await response.text();
+                
+                // Datei erstellen und downloaden
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `mediaitems_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                console.log('✅ CSV heruntergeladen!');
+            } catch (error) {
+                console.error('❌ Download-Fehler:', error);
+                alert('❌ Download fehlgeschlagen: ' + error.message);
+            }
+        }
+
+        /**
+         * Upload Dialog öffnen
+         */
+        function openUploadDialog() {
+            document.getElementById('uploadDialog').style.display = 'block';
+            document.getElementById('uploadBackdrop').style.display = 'block';
+        }
+
+        /**
+         * Upload Dialog schließen
+         */
+        function closeUploadDialog() {
+            document.getElementById('uploadDialog').style.display = 'none';
+            document.getElementById('uploadBackdrop').style.display = 'none';
+            document.getElementById('csvFile').value = '';
+        }
+
+        /**
+         * CSV Upload
+         */
+        async function uploadCSV() {
+            const fileInput = document.getElementById('csvFile');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('⚠️ Bitte wähle eine CSV-Datei aus!');
+                return;
+            }
+            
+            // Finale Warnung
+            if (!confirm('⚠️ LETZTE WARNUNG!\n\nAlle bestehenden Daten werden UNWIDERRUFLICH gelöscht!\n\nFortfahren?')) {
+                return;
+            }
+            
+            try {
+                const file = fileInput.files[0];
+                const csvContent = await file.text();
+                
+                const response = await fetch(`${API.MEDIA}/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: csvContent
+                });
+                
+                const result = await response.text();
+                
+                if (response.ok) {
+                    alert(result);
+                    closeUploadDialog();
+                    loadStats(); // Stats neu laden
+                } else {
+                    throw new Error(result);
+                }
+            } catch (error) {
+                console.error('❌ Upload-Fehler:', error);
+                alert('❌ Upload fehlgeschlagen: ' + error.message);
+            }
+        }
     </script>
 </body>
 </html>

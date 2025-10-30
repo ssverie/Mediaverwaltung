@@ -115,4 +115,49 @@ public class MediaItemController {
         long count = service.findAll().size();
         return ResponseEntity.ok(count);
     }
+    
+    
+    
+    
+ // ========================================
+ // CSV DOWNLOAD/UPLOAD (NEU!)
+ // ========================================
+
+ /**
+  * GET /api/media/download
+  * Exportiert alle MediaItems als CSV-Datei
+  */
+ @GetMapping("/download")
+ public ResponseEntity<String> downloadCSV() {
+     try {
+         String csv = service.exportAllToCSV();
+         
+         return ResponseEntity.ok()
+                 .header("Content-Type", "text/csv; charset=UTF-8")
+                 .header("Content-Disposition", "attachment; filename=mediaitems_" + 
+                         java.time.LocalDate.now() + ".csv")
+                 .body(csv);
+     } catch (Exception e) {
+         return ResponseEntity.internalServerError().build();
+     }
+ }
+
+ /**
+  * POST /api/media/upload
+  * Importiert MediaItems aus CSV (REPLACE-Strategie)
+  * 
+  * Body: Raw CSV-Content als String
+  */
+ @PostMapping("/upload")
+ public ResponseEntity<String> uploadCSV(@RequestBody String csvContent) {
+     try {
+         int count = service.importFromCSVReplace(csvContent);
+         return ResponseEntity.ok("✅ Import erfolgreich: " + count + " Items importiert");
+     } catch (Exception e) {
+         return ResponseEntity.badRequest()
+                 .body("❌ Import fehlgeschlagen: " + e.getMessage());
+     }
+ }
+    
+    
 }
